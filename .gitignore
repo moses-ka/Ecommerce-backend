@@ -52,3 +52,5 @@ manage.py
 # example database
 media/*
 *.db
+.vscode
+
