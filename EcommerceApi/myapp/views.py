@@ -84,6 +84,6 @@ class SignInView(generics.CreateAPIView):
         password = request.data.get('password')
         user = authenticate(username=username,email=email, password=password)
         if user:
-            return Response({'token': user.auth_token.key})
+            return Response({ 'user_name': user.email ,'token': user.auth_token.key })
         else:
             return Response({'error': 'Wrong Credentials'}, status=status.HTTP_400_BAD_REQUEST)
