@@ -11,3 +11,10 @@ class Product(models.Model):
     size = models.CharField(max_length=120)
     def __str__(self):
         return self.title
+
+class User(models.Model):
+    username = models.CharField(max_length=120)
+    email = models.EmailField(max_length=120)
+    password = models.CharField(max_length=120)
+    def __str__(self):
+        return self.username

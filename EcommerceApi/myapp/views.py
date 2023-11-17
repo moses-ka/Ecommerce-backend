@@ -1,10 +1,17 @@
+from sqlite3 import IntegrityError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product
-from .serializers import ProductSerializer
+from .models import Product , User
+from .serializers import ProductSerializer ,UserSerializer
 from django.shortcuts import get_object_or_404
+from rest_framework import generics
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate
+from rest_framework import status
 
 class ProductManagment(APIView):
     permission_classes = [IsAuthenticated]
@@ -52,3 +59,31 @@ class getProduct(APIView):
         product = get_object_or_404(Product, id=id)     
         serializer = ProductSerializer(product)
         return Response(serializer.data)
+    
+class SignUpView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def perform_create(self, serializer):
+        # Hash the password before saving the user
+        hashed_password = make_password(serializer.validated_data['password'])
+        serializer.save(password=hashed_password)
+
+        # Create a token for the user
+        user = serializer.instance
+        Token.objects.create(user=user)
+
+
+class SignInView(generics.CreateAPIView):
+    serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+        user = authenticate(username=username,email=email, password=password)
+        if user:
+            return Response({'token': user.auth_token.key})
+        else:
+            return Response({'error': 'Wrong Credentials'}, status=status.HTTP_400_BAD_REQUEST)

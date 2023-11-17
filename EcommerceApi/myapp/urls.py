@@ -1,6 +1,6 @@
 
 from django.urls import path, include
-from .views import getProducts , ProductManagment ,getProduct
+from .views import getProducts , ProductManagment ,getProduct,SignInView,SignUpView
 from rest_framework.authtoken.views import obtain_auth_token
 
 
@@ -11,5 +11,6 @@ urlpatterns = [
     path ('api/product-delete/<int:pk>', ProductManagment.as_view() , name='api-products-delete'),
     path ('api/product-add', ProductManagment.as_view() , name='api-products-add'),
     path('api/token/', obtain_auth_token, name='api_token_auth'),
-    
+    path('signup/', SignUpView.as_view(), name='signup'),
+    path('signin/', SignInView.as_view(), name='signin'),
 ]

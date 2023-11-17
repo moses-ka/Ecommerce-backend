@@ -136,6 +136,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+# settings.py
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Add your frontend URL
