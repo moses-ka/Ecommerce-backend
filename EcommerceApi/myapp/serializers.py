@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from rest_framework.validators import UniqueValidator
 class ProductSerializer(serializers.ModelSerializer):
+   
     class Meta:
         model = Product
         fields = '__all__'  # This will include all fields in the serializer
