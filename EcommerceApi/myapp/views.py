@@ -60,6 +60,12 @@ class getProduct(APIView):
         serializer = ProductSerializer(product)
         return Response(serializer.data)
     
+class searchProduct(APIView):
+    def get(self, request, *args, **kwargs): #this func return all products with a specific tag
+        search = kwargs.get('search')
+        products = Product.objects.filter(title__icontains=search)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
 class SignUpView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer

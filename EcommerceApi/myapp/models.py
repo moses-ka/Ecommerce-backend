@@ -9,6 +9,7 @@ class Product(models.Model):
     sex = models.CharField(max_length=120)
     img = models.ImageField(blank=True, null=True)
     size = models.CharField(max_length=120)
+    tags = models.CharField(max_length=120,null=True, blank=True)
     def __str__(self):
         return self.title
 
