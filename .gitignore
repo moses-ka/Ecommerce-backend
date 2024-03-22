@@ -49,9 +49,10 @@ coverage.xml
 
 .DS_Store
 
-# example database
+
 media/*
 db.sqlite3
 .vscode
 
 .media/*
+.media
