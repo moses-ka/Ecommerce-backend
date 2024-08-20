@@ -37,3 +37,15 @@ class User(models.Model):
     password = models.CharField(max_length=120)
     def __str__(self):
         return self.username
+
+from django.contrib.auth.models import User
+from django.db import models
+from django.contrib import auth
+
+class OrderedProduct(models.Model):
+    products = models.ManyToManyField(Product)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=auth.get_user)
+    total_price = models.DecimalField(decimal_places=4, max_digits=10000)
+
+    def __str__(self):
+        return ', '.join([product.title for product in self.products.all()])

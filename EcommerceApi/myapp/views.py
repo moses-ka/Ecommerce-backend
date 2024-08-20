@@ -93,3 +93,17 @@ class SignInView(generics.CreateAPIView):
             return Response({ 'user_name': user.email ,'token': user.auth_token.key })
         else:
             return Response({'error': 'Wrong Credentials'}, status=status.HTTP_400_BAD_REQUEST)
+class CheckoutView(generics.CreateAPIView):
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        user = request.data.get('username')
+        oredered_products = request.data.get('products')
+        if serializer.is_valid():
+            user = User.objects.get(user=user)
+            for product in oredered_products:
+                product = Product.objects.get(title=product)
+                user.products.add(product)
+            return Response({'message': 'Order placed successfully'}, status=status.HTTP_201_CREATED)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
