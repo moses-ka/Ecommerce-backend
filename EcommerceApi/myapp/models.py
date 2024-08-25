@@ -48,4 +48,5 @@ class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     products = models.ManyToManyField(Product)
+    date = models.DateTimeField(auto_now_add=True,max_length=120)
  

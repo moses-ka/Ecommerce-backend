@@ -1,6 +1,6 @@
 
 from django.urls import path, include
-from .views import getProducts , ProductManagment ,getProduct,SignInView,SignUpView,searchProduct,CheckoutView
+from .views import getProducts , ProductManagment ,getProduct,SignInView,SignUpView,searchProduct,CheckoutView,OrderedProductsView
 from rest_framework.authtoken.views import obtain_auth_token
 
 
@@ -15,5 +15,5 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('signin/', SignInView.as_view(), name='signin'),
     path('products/checkout', CheckoutView.as_view() , name='api-products-checkout'),
-    path ("ordered-products", CheckoutView.as_view() , name='api-ordered-products'),
+    path ("ordered-products", OrderedProductsView.as_view() , name='api-ordered-products'),
 ]

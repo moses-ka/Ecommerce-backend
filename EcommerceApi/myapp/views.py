@@ -120,8 +120,8 @@ class CheckoutView(generics.CreateAPIView):
    
     
 
- 
-    def get(self, request, *args, **kwargs):
+class OrderedProductsView(APIView):
+    def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         
         if not username:
