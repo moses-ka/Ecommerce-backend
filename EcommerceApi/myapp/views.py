@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product , User
-from .serializers import ProductSerializer ,UserSerializer
+from .models import Product , User, Orders
+from .serializers import ProductSerializer ,UserSerializer,CheckoutSerializer,OrderedProductSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
@@ -94,16 +94,48 @@ class SignInView(generics.CreateAPIView):
         else:
             return Response({'error': 'Wrong Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 class CheckoutView(generics.CreateAPIView):
+    serializer_class = CheckoutSerializer
+    
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        user = request.data.get('username')
-        oredered_products = request.data.get('products')
-        if serializer.is_valid():
-            user = User.objects.get(user=user)
-            for product in oredered_products:
-                product = Product.objects.get(title=product)
-                user.products.add(product)
-            return Response({'message': 'Order placed successfully'}, status=status.HTTP_201_CREATED)
-        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+       print("Request data:", request.data)
+       serializer = self.get_serializer(data=request.data)
+       if serializer.is_valid():
+           print("Serializer is valid")
+           user = User.objects.get(email=serializer.validated_data['username'])
+           total = serializer.validated_data['total']
+           ordered_product_ids = serializer.validated_data['products']
+           order = Orders.objects.create(user=user, total=total)
+           print("Order created:", order)
+           for product_id in serializer.validated_data['products']:
+              try:
+                  product = Product.objects.get(id=product_id)
+                  order.products.add(product)
+              except Product.DoesNotExist:
+                  return Response({'error': f'Product with ID {product_id} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+           return Response({'message': 'Order placed successfully', 'total': total}, status=status.HTTP_201_CREATED)
+       else:
+           print("Serializer is not valid")
+           print("Errors:", serializer.errors)
+           return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+   
     
-    
+
+ 
+    def get(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        
+        if not username:
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        ordered_products = Orders.objects.filter(user=user)
+        print(f"Orders for user {username}: {ordered_products}")
+      # This will show the raw SQL query
+        
+        ordered_products_data = OrderedProductSerializer(ordered_products, many=True).data
+        
+        return Response({'ordered_products': ordered_products_data}, status=status.HTTP_200_OK)

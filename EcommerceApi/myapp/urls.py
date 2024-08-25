@@ -15,4 +15,5 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('signin/', SignInView.as_view(), name='signin'),
     path('products/checkout', CheckoutView.as_view() , name='api-products-checkout'),
+    path ("ordered-products", CheckoutView.as_view() , name='api-ordered-products'),
 ]
